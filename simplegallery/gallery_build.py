@@ -51,14 +51,17 @@ def build_html(gallery_config):
 
 # Add descriptions if the caption option is disable or description option is enabled
     for image in images_data:
-        images_data[image]['description'] = ''.join(image).split(".")[0]
+        file_name = image.split(".")[0]
+        file_extension = image.split(".")[-1]
+        description = f"{file_name}.{file_extension}"
+        images_data[image]['description'] = description
 
     # Remove descriptions if the caption option is enabled or description option is disable
     if gallery_config['disable_captions'] or gallery_config['description_photo_as_filename'] == False:
         for image in images_data:
             images_data[image]['description'] = ''
 
-    images_data_list = [{**images_data[image], "name": image} for image in images_data.keys()]
+    images_data_list = [{**images_data[image], "name": image} for image in sorted(images_data.keys(), key=lambda x: int(x.split(".")[0]))]
 
     # Find the first photo for the background if no background photo specified
     background_photo = gallery_config["background_photo"]
