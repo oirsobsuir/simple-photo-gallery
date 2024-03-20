@@ -57,6 +57,15 @@ gallery-init
 gallery-build
 ```
 
+**Please note** Sometimes the process of creating html pages may be interrupted with an error description: “Something went wrong when creating thumbnails: the module “PIL.Image” does not have the attribute “ANTIALIAS”.
+
+In order to correct the error and continue creating the gallery html page, you need to type the following commands on the command line:
+
+```
+pip uninstall pillow
+pip install pillow==9.5.0
+```
+
 The gallery is ready! You can view it by opening the `index.html` file in the `public` folder. The `public` folder contains all the files you need for your gallery and you can host it on any static hosting provider.
 
 > **Note**
