@@ -28,9 +28,15 @@ Simple Photo Gallery is a simple command line tool written in Python that helps 
 
 **Python must be 3.11.4**
 
-Clone repo
+1. Clone repo
 
-In repo folder execut 
+2. Open repo folder
+
+```
+cd simple-photo-gallery
+``` 
+
+3. In repo folder execut 
 ```
 pip install .
 ```
