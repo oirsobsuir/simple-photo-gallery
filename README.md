@@ -26,7 +26,7 @@ Simple Photo Gallery is a simple command line tool written in Python that helps 
 
 ## Installation
 
-**Python must be 3.11.4**
+**Python must be [3.11.4](https://www.python.org/downloads/release/python-3114/)** 
 
 1. Clone repo
 
