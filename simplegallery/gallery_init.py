@@ -138,7 +138,9 @@ def create_gallery_folder_structure(gallery_root, image_source):
 
     files = glob.glob(os.path.join(image_source, "*"))
     file_numbers = []
-    for path in files:
+    counter = 1
+    sorted_files = natsort.natsorted(files)  # Сортировка файлов в естественном порядке
+    for path in sorted_files:
         basename = os.path.basename(path)
         basename_lower = basename.lower()
         if (
@@ -148,34 +150,13 @@ def create_gallery_folder_structure(gallery_root, image_source):
             or basename_lower.endswith(".mp4")
             or basename_lower.endswith(".png")
         ):
-            number_match = re.search(r'\d+', basename)  # Извлечение всех чисел в имени файла
-            if number_match:
-                file_number = number_match.group(0)
-                file_numbers.append(int(file_number))
-
-    counter = 1
-    sorted_file_numbers = natsort.natsorted(file_numbers)
-    for file_number in sorted_file_numbers:
-        for path in files:
-            basename = os.path.basename(path)
-            basename_lower = basename.lower()
-            if (
-                basename_lower.endswith(".jpg")
-                or basename_lower.endswith(".jpeg")
-                or basename_lower.endswith(".gif")
-                or basename_lower.endswith(".mp4")
-                or basename_lower.endswith(".png")
-            ):
-                if re.search(fr'\b{file_number}\b', basename):  # Поиск соответствующего номера в имени файла
-                    file_extension = os.path.splitext(basename)[1]
-                    new_name = f"{counter}{file_extension}"
-                    counter += 1
-                    if only_copy:
-                        shutil.copy(path, os.path.join(photos_dir, new_name))
-                    else:
-                        shutil.move(path, os.path.join(photos_dir, new_name))
-                    break
-
+            file_extension = os.path.splitext(basename)[1]
+            new_name = f"{counter}{file_extension}"
+            counter += 1
+            if only_copy:
+                shutil.copy(path, os.path.join(photos_dir, new_name))
+            else:
+                shutil.move(path, os.path.join(photos_dir, new_name))
 
 def create_gallery_json(gallery_root, remote_link, use_defaults=False):
     """
