@@ -26,10 +26,15 @@ Simple Photo Gallery is a simple command line tool written in Python that helps 
 
 ## Installation
 
-Simple Photo Gallery can be easily installed with `pip`. If you don't have `pip`, please install the [latest Python release](https://www.python.org/downloads/).
+**Python must be 3.11.4**
+
+Clone repo
+
+In repo folder execut 
 ```
-pip install simple-photo-gallery
+pip install .
 ```
+
 
 ## Example Usage
 
