@@ -133,7 +133,10 @@ def create_gallery_folder_structure(gallery_root, image_source):
     if not image_source:
         image_source = gallery_root
         only_copy = False
-    for path in glob.glob(os.path.join(image_source, "*")):
+
+    counter = 1
+    files = glob.glob(os.path.join(image_source, "*"))
+    for index, path in enumerate(files, start=1):
         basename_lower = os.path.basename(path).lower()
         if (
             basename_lower.endswith(".jpg")
@@ -143,9 +146,12 @@ def create_gallery_folder_structure(gallery_root, image_source):
             or basename_lower.endswith(".png")
         ):
             if only_copy:
-                shutil.copy(path, os.path.join(photos_dir, os.path.basename(path)))
+                new_name = str(counter) + os.path.splitext(path)[1]
+                shutil.copy(path, os.path.join(photos_dir, new_name))
             else:
-                shutil.move(path, os.path.join(photos_dir, os.path.basename(path)))
+                new_name = str(counter) + os.path.splitext(path)[1]
+                shutil.move(path, os.path.join(photos_dir, new_name))
+            counter += 1
 
 
 def create_gallery_json(gallery_root, remote_link, use_defaults=False):
