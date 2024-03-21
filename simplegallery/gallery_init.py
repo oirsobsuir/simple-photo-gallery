@@ -137,9 +137,9 @@ def create_gallery_folder_structure(gallery_root, image_source):
         only_copy = False
 
     files = glob.glob(os.path.join(image_source, "*"))
-    sorted_files = natsort.natsorted(files)  # Сортировка файлов в естественном порядке
+    sorted_files = natsort.natsorted(files)  # Sort files in natural order
 
-    original_filenames_file = os.path.join(gallery_root, "original_filenames.txt")
+    original_filenames_file = os.path.join(gallery_root, "public", "original_filenames.txt")
     with open(original_filenames_file, "w") as f:
         for i, path in enumerate(sorted_files, start=1):
             basename = os.path.basename(path)
@@ -157,6 +157,21 @@ def create_gallery_folder_structure(gallery_root, image_source):
                 else:
                     shutil.move(path, os.path.join(photos_dir, new_filename))
                 f.write(f"{new_filename},{basename}\n")
+
+    # Read original filenames and assign descriptions to images
+    images_data = {}
+    with open(original_filenames_file, "r") as f:
+        for line in f:
+            line_parts = line.strip().split(",")
+            new_filename = line_parts[0].strip()
+            original_filename = line_parts[1].strip()
+            filename_without_extension = os.path.splitext(original_filename)[0]
+            images_data[new_filename] = {'description': filename_without_extension}
+
+    # Assign descriptions to images
+    for image in images_data:
+        filename = os.path.splitext(image)[0]  # Get the filename without extension
+        images_data[image]['description'] = filename
 
 def create_gallery_json(gallery_root, remote_link, use_defaults=False):
     """
