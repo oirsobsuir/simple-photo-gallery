@@ -36,7 +36,7 @@ Simple Photo Gallery is a simple command line tool written in Python that helps 
 cd simple-photo-gallery
 ```
 
-5. Install natsort
+3. Install natsort
 
 ```
 pip install natsort
