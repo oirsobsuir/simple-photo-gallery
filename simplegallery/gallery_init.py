@@ -156,15 +156,14 @@ def create_gallery_folder_structure(gallery_root, image_source):
                     shutil.copy(path, os.path.join(photos_dir, new_filename))
                 else:
                     shutil.move(path, os.path.join(photos_dir, new_filename))
-                f.write(f"{new_filename},{basename}\n")
+                original_filename = os.path.splitext(basename)[0]
+                f.write(f"{new_filename},{original_filename}\n")
 
     # Read original filenames and assign descriptions to images
     images_data = {}
     with open(original_filenames_file, "r") as f:
         for line in f:
-            line_parts = line.strip().split(",")
-            new_filename = line_parts[0].strip()
-            original_filename = line_parts[1].strip()
+            new_filename, original_filename = line.strip().split(",", 1)
             filename_without_extension = os.path.splitext(original_filename)[0]
             images_data[new_filename] = {'description': filename_without_extension}
 
