@@ -57,19 +57,14 @@ def build_html(gallery_config):
 
     original_filenames_mapping = {}
     for line in original_filenames_data:
-        filenames = line.strip().split(",")
-        new_filename = filenames[0].strip()
-        original_filename = filenames[1].strip()
-        original_filenames_mapping[new_filename] = original_filename
+        filename, description = line.strip().split(",", 1)
+        new_filename = filename.strip()
+        original_filenames_mapping[new_filename] = description.strip()
 
    # Add descriptions from original_filenames_mapping to images_data
     for image in images_data:
-       filename = os.path.splitext(image)[0]  # Get the filename without extension
-       original_filename = original_filenames_mapping.get(image)
-       if original_filename:
-           images_data[image]['description'] = os.path.splitext(original_filename)[0]
-       else:
-           images_data[image]['description'] = ''
+      description = original_filenames_mapping.get(image, '')
+      images_data[image]['description'] = description
 
     # Remove descriptions if the caption option is enabled or description option is disabled
     if gallery_config['disable_captions'] or gallery_config['description_photo_as_filename'] == False:
