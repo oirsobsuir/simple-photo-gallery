@@ -150,6 +150,8 @@ def create_gallery_folder_structure(gallery_root, image_source):
                 or basename_lower.endswith(".gif")
                 or basename_lower.endswith(".mp4")
                 or basename_lower.endswith(".png")
+                or basename_lower.endswith(".bmp")
+                or basename_lower.endswith(".webp")
             ):
                 new_filename = f"{i}{os.path.splitext(basename)[1]}"
                 if only_copy:

@@ -103,6 +103,9 @@ def create_thumbnail(input_path, thumbnail_path, height):
         or input_path.lower().endswith(".jpeg")
         or input_path.lower().endswith(".gif")
         or input_path.lower().endswith(".png")
+        or input_path.lower().endswith(".bmp")
+        or input_path.lower().endswith(".webp")
+        or input_path.lower().endswith(".svg")
     ):
         create_image_thumbnail(input_path, thumbnail_path, height)
     # Handle MP4s
@@ -248,6 +251,10 @@ def get_metadata(image, thumbnail_path, public_path):
         image_data["type"] = "video"
         image_data["description"] = ""
         thumbnail_path = thumbnail_path.replace(".mp4", ".jpg")
+    elif image.lower().endswith(".bmp") or image.lower().endswith(".webp"):
+        image_data["size"] = get_image_size(image)
+        image_data["type"] = "image"
+        image_data["description"] = ""
     else:
         raise spg_common.SPGException(
             f"Unsupported file type {os.path.basename(image)}"
