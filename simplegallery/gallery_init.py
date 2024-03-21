@@ -139,20 +139,24 @@ def create_gallery_folder_structure(gallery_root, image_source):
     files = glob.glob(os.path.join(image_source, "*"))
     sorted_files = natsort.natsorted(files)  # Сортировка файлов в естественном порядке
 
-    for path in sorted_files:
-        basename = os.path.basename(path)
-        basename_lower = basename.lower()
-        if (
-            basename_lower.endswith(".jpg")
-            or basename_lower.endswith(".jpeg")
-            or basename_lower.endswith(".gif")
-            or basename_lower.endswith(".mp4")
-            or basename_lower.endswith(".png")
-        ):
-            if only_copy:
-                shutil.copy(path, os.path.join(photos_dir, basename))
-            else:
-                shutil.move(path, os.path.join(photos_dir, basename))
+    original_filenames_file = os.path.join(gallery_root, "original_filenames.txt")
+    with open(original_filenames_file, "w") as f:
+        for i, path in enumerate(sorted_files, start=1):
+            basename = os.path.basename(path)
+            basename_lower = basename.lower()
+            if (
+                basename_lower.endswith(".jpg")
+                or basename_lower.endswith(".jpeg")
+                or basename_lower.endswith(".gif")
+                or basename_lower.endswith(".mp4")
+                or basename_lower.endswith(".png")
+            ):
+                new_filename = f"{i}{os.path.splitext(basename)[1]}"
+                if only_copy:
+                    shutil.copy(path, os.path.join(photos_dir, new_filename))
+                else:
+                    shutil.move(path, os.path.join(photos_dir, new_filename))
+                f.write(f"{new_filename},{basename}\n")
 
 def create_gallery_json(gallery_root, remote_link, use_defaults=False):
     """
