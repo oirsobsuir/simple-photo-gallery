@@ -6,6 +6,7 @@ import jinja2
 from collections import OrderedDict
 import simplegallery.common as spg_common
 from simplegallery.logic.gallery_logic import get_gallery_logic
+import re
 
 
 def parse_args():
@@ -49,21 +50,19 @@ def build_html(gallery_config):
     with open(gallery_config["images_data_file"], "r") as images_data_in:
         images_data = json.load(images_data_in, object_pairs_hook=OrderedDict)
 
-# Add descriptions if the caption option is disable or description option is enabled
+    # Add descriptions if the caption option is disabled or description option is enabled
     for image in images_data:
-        file_name = image.split(".")[0]
-        file_extension = image.split(".")[-1]
-        description = f"{file_name}.{file_extension}"
-        images_data[image]['description'] = description
+            filename = os.path.splitext(image)[0]  # Get the filename without extension
+            images_data[image]['description'] = filename
 
-    # Remove descriptions if the caption option is enabled or description option is disable
+    # Remove descriptions if the caption option is enabled or description option is disabled
     if gallery_config['disable_captions'] or gallery_config['description_photo_as_filename'] == False:
-        for image in images_data:
-            images_data[image]['description'] = ''
+            for image in images_data:
+                images_data[image]['description'] = ''
 
-    images_data_list = [{**images_data[image], "name": image} for image in sorted(images_data.keys(), key=lambda x: int(x.split(".")[0]))]
+    images_data_list = [{**images_data[image], "name": image} for image in sorted(images_data.keys(), key=lambda x: int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 0)]
 
-    # Find the first photo for the background if no background photo specified
+    # Find the first photo for the background if no background photo is specified
     background_photo = gallery_config["background_photo"]
     if not background_photo:
         for image in images_data:

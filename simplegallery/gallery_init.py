@@ -137,9 +137,8 @@ def create_gallery_folder_structure(gallery_root, image_source):
         only_copy = False
 
     files = glob.glob(os.path.join(image_source, "*"))
-    file_numbers = []
-    counter = 1
     sorted_files = natsort.natsorted(files)  # Сортировка файлов в естественном порядке
+
     for path in sorted_files:
         basename = os.path.basename(path)
         basename_lower = basename.lower()
@@ -150,13 +149,10 @@ def create_gallery_folder_structure(gallery_root, image_source):
             or basename_lower.endswith(".mp4")
             or basename_lower.endswith(".png")
         ):
-            file_extension = os.path.splitext(basename)[1]
-            new_name = f"{counter}{file_extension}"
-            counter += 1
             if only_copy:
-                shutil.copy(path, os.path.join(photos_dir, new_name))
+                shutil.copy(path, os.path.join(photos_dir, basename))
             else:
-                shutil.move(path, os.path.join(photos_dir, new_name))
+                shutil.move(path, os.path.join(photos_dir, basename))
 
 def create_gallery_json(gallery_root, remote_link, use_defaults=False):
     """
