@@ -34,9 +34,15 @@ Simple Photo Gallery is a simple command line tool written in Python that helps 
 
 ```
 cd simple-photo-gallery
-``` 
+```
 
-3. In repo folder execut 
+5. Install natsort
+
+```
+pip install natsort
+```
+
+4. In repo folder execut 
 ```
 pip install .
 ```
