@@ -6,6 +6,7 @@ import jinja2
 from collections import OrderedDict
 import simplegallery.common as spg_common
 from simplegallery.logic.gallery_logic import get_gallery_logic
+import re
 
 
 def parse_args():
@@ -45,22 +46,34 @@ def build_html(gallery_config):
     :param gallery_config: Gallery configuration dictionary
     """
 
-    # Load the images_data
+   # Load the images_data
     with open(gallery_config["images_data_file"], "r") as images_data_in:
         images_data = json.load(images_data_in, object_pairs_hook=OrderedDict)
 
-# Add descriptions if the caption option is disable or description option is enabled
+   # Read original filenames and assign descriptions to images
+    original_filenames_file = os.path.join(gallery_config["public_path"], "original_filenames.txt")
+    with open(original_filenames_file, "r") as f:
+       original_filenames_data = f.readlines()
+
+    original_filenames_mapping = {}
+    for line in original_filenames_data:
+        filename, description = line.strip().split(",", 1)
+        new_filename = filename.strip()
+        original_filenames_mapping[new_filename] = description.strip()
+
+   # Add descriptions from original_filenames_mapping to images_data
     for image in images_data:
-        images_data[image]['description'] = ''.join(image).split(".")[0]
+      description = original_filenames_mapping.get(image, '')
+      images_data[image]['description'] = description
 
-    # Remove descriptions if the caption option is enabled or description option is disable
+    # Remove descriptions if the caption option is enabled or description option is disabled
     if gallery_config['disable_captions'] or gallery_config['description_photo_as_filename'] == False:
-        for image in images_data:
-            images_data[image]['description'] = ''
+            for image in images_data:
+                images_data[image]['description'] = ''
 
-    images_data_list = [{**images_data[image], "name": image} for image in images_data.keys()]
+    images_data_list = [{**images_data[image], "name": image} for image in sorted(images_data.keys(), key=lambda x: int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 0)]
 
-    # Find the first photo for the background if no background photo specified
+    # Find the first photo for the background if no background photo is specified
     background_photo = gallery_config["background_photo"]
     if not background_photo:
         for image in images_data:

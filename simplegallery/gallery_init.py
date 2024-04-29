@@ -8,6 +8,8 @@ import json
 from distutils.dir_util import copy_tree
 import simplegallery.common as spg_common
 import simplegallery.logic.gallery_logic as gallery_logic
+import re
+import natsort
 
 
 def parse_args():
@@ -133,20 +135,44 @@ def create_gallery_folder_structure(gallery_root, image_source):
     if not image_source:
         image_source = gallery_root
         only_copy = False
-    for path in glob.glob(os.path.join(image_source, "*")):
-        basename_lower = os.path.basename(path).lower()
-        if (
-            basename_lower.endswith(".jpg")
-            or basename_lower.endswith(".jpeg")
-            or basename_lower.endswith(".gif")
-            or basename_lower.endswith(".mp4")
-            or basename_lower.endswith(".png")
-        ):
-            if only_copy:
-                shutil.copy(path, os.path.join(photos_dir, os.path.basename(path)))
-            else:
-                shutil.move(path, os.path.join(photos_dir, os.path.basename(path)))
 
+    files = glob.glob(os.path.join(image_source, "*"))
+    sorted_files = natsort.natsorted(files)  # Sort files in natural order
+
+    original_filenames_file = os.path.join(gallery_root, "public", "original_filenames.txt")
+    with open(original_filenames_file, "w") as f:
+        for i, path in enumerate(sorted_files, start=1):
+            basename = os.path.basename(path)
+            basename_lower = basename.lower()
+            if (
+                basename_lower.endswith(".jpg")
+                or basename_lower.endswith(".jpeg")
+                or basename_lower.endswith(".gif")
+                or basename_lower.endswith(".mp4")
+                or basename_lower.endswith(".png")
+                or basename_lower.endswith(".bmp")
+                or basename_lower.endswith(".webp")
+            ):
+                new_filename = f"{i}{os.path.splitext(basename)[1]}"
+                if only_copy:
+                    shutil.copy(path, os.path.join(photos_dir, new_filename))
+                else:
+                    shutil.move(path, os.path.join(photos_dir, new_filename))
+                original_filename = os.path.splitext(basename)[0]
+                f.write(f"{new_filename},{original_filename}\n")
+
+    # Read original filenames and assign descriptions to images
+    images_data = {}
+    with open(original_filenames_file, "r") as f:
+        for line in f:
+            new_filename, original_filename = line.strip().split(",", 1)
+            filename_without_extension = os.path.splitext(original_filename)[0]
+            images_data[new_filename] = {'description': filename_without_extension}
+
+    # Assign descriptions to images
+    for image in images_data:
+        filename = os.path.splitext(image)[0]  # Get the filename without extension
+        images_data[image]['description'] = filename
 
 def create_gallery_json(gallery_root, remote_link, use_defaults=False):
     """

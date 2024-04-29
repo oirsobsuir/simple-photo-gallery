@@ -26,10 +26,27 @@ Simple Photo Gallery is a simple command line tool written in Python that helps 
 
 ## Installation
 
-Simple Photo Gallery can be easily installed with `pip`. If you don't have `pip`, please install the [latest Python release](https://www.python.org/downloads/).
+**Python must be [3.11.4](https://www.python.org/downloads/release/python-3114/)** 
+
+1. Clone repo
+
+2. Open repo folder
+
 ```
-pip install simple-photo-gallery
+cd simple-photo-gallery
 ```
+
+3. Install natsort
+
+```
+pip install natsort
+```
+
+4. In repo folder execut 
+```
+pip install .
+```
+
 
 ## Example Usage
 
@@ -44,6 +61,15 @@ gallery-init
 3. To generate the photos' thumbnails and to create the gallery HTML, CSS and JS files use the following command:
 ```
 gallery-build
+```
+
+**Please note** Sometimes the process of creating html pages may be interrupted with an error description: “Something went wrong when creating thumbnails: the module “PIL.Image” does not have the attribute “ANTIALIAS”.
+
+In order to correct the error and continue creating the gallery html page, you need to type the following commands on the command line:
+
+```
+pip uninstall pillow
+pip install pillow==9.5.0
 ```
 
 The gallery is ready! You can view it by opening the `index.html` file in the `public` folder. The `public` folder contains all the files you need for your gallery and you can host it on any static hosting provider.
